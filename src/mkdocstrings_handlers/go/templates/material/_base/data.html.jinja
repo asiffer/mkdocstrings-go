@@ -1,0 +1,123 @@
+{#- Generic data template. Update to fit your handler!
+
+Context:
+  data: The data to render.
+  root (bool): Whether this is the root object, injected with `:::` in a Markdown page.
+  heading_level (int): The HTML heading level to use.
+  config (dict): The configuration options.
+-#}
+
+{% block logs scoped %}
+  {#- Logging block.
+
+  This block can be used to log debug messages, deprecation messages, warnings, etc.
+  -#}
+  {{ log.debug("Rendering " + data.path) }}
+{% endblock logs %}
+
+<div class="doc doc-object doc-{{ data.type }}">
+  {% with obj = data, html_id = data.path %}
+
+    {% filter heading(
+        heading_level,
+        role="data",
+        id=html_id,
+        class="doc doc-heading",
+        toc_label=('<code class="doc-symbol doc-symbol-toc doc-symbol-{{ data.type }}" data-symbol="{{ config.toc_label or data.symbol }}"></code>&nbsp;'|safe if config.show_symbol_type_toc else '') + data.name,
+      ) %}
+
+      {% block heading scoped %}
+        {#- Heading block.
+
+        This block renders the heading for the data.
+        -#}
+        {% if config.show_symbol_type_heading %}<code class="doc-symbol doc-symbol-heading doc-symbol-{{ data.type }}" data-symbol="{{ data.symbol }}"></code>{% endif %}
+        <span class="doc doc-object-name doc-{{ data.type }}-name">{{ config.heading if config.heading and root else data.name }}</span>
+        {% if config.show_tags and data.tag %}
+        <span class="doc doc-labels">
+          {% for key, value in data.tag.items() %}
+          <small class="doc doc-label doc-label-{{ key }}"><code title="{{ key }}">{{ value }}</code></small>
+          {% endfor %}
+        </span>
+      {% endif %}
+      {% endblock heading %}
+
+    {% endfilter %}
+
+    {% block signature scoped %}
+      {#- Signature block.
+
+      This block renders the signature for the data.
+      -#}
+      {% if data.signature %}
+        {{ data.signature | highlight(language="go") }}
+      {% endif %}
+    {% endblock signature %}
+
+    <div class="doc doc-contents {% if root %}first{% endif %}">
+      {% block contents scoped %}
+        {#- Contents block.
+
+        This block renders the contents of the data.
+        It contains other blocks that users can override.
+        Overriding the contents block allows to rearrange the order of the blocks.
+        -#}
+         {% block docstring scoped %}
+          {#- Docstring block.
+
+          This block renders the docstring for the function.
+          -#}
+
+          {% if data.doc %}
+          <div class="doc doc-description">
+          {{ data.doc}}
+          </div>
+          {% endif %}
+
+    
+        {% endblock docstring %}
+
+
+        {% block src scoped %}
+          {#- Source block.
+
+          This block renders the source code for the function.
+          -#}
+          {% if config.show_source and data.type == "function" and data.body %}
+            <details class="mkdocstrings-source">
+              <summary>
+                <code>{{ data.location }}</code>
+              </summary>
+              {{ data.body | highlight(language="go",linestart=data.start_line or 0,linenums=True) }}
+            </details>
+          {% endif %}
+        {% endblock src %}
+
+
+        {% block members scoped %}
+        {% if config.show_members and (data.type == "type" or data.type == "struct") and data.items %}
+          {% for member in data.items %}
+            {% if member.type != "method" %}
+            {# attribute #}
+              {% with heading_level=heading_level+1, data=member %}
+              {% include "data.html.jinja" %}
+              {% endwith %}
+            {% endif %}
+          {% endfor %}
+          {% for member in data.items %}
+            {% if member.type == "method" %}
+            {# method #}
+              {% with heading_level=heading_level+1, data=member %}
+              {% include "data.html.jinja" %}
+              {% endwith %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {% endblock members %}
+
+      {% endblock contents %}
+    </div>
+
+  {% endwith %}
+</div>
