@@ -55,7 +55,7 @@ jobs:
       - name: Build Go library
         run: |
           go build -buildmode=c-shared -o src/mkdocstrings_handlers/go/_internal/libcollector.dll src/lib/*.go
-          rm -f src/mkdocstrings_handlers/go/_internal/*.h
+          Remove-Item -Force src/mkdocstrings_handlers/go/_internal/*.h
           uv sync --all-extras
         if: matrix.os == 'windows-latest'
       
