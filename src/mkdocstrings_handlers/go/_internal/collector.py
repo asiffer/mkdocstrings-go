@@ -22,7 +22,7 @@ _lib.collect.argtypes = [
 _DEFAULT_BUF_SIZE = 65536
 
 
-type_to_symbol = {
+_type_to_symbol = {
     "function": "func",
     "method": "meth",
 }
@@ -51,7 +51,7 @@ class _GoObject(pydantic.BaseModel):
     @property
     def symbol(self) -> str:
         """Get the symbol of the object, if applicable."""
-        return type_to_symbol.get(self.type, self.type)
+        return _type_to_symbol.get(self.type, self.type)
 
 
 def _collect(import_path: str, directory: str, identifier: str, buf_size: int = _DEFAULT_BUF_SIZE) -> _GoObject:
