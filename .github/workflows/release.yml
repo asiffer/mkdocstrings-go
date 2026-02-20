@@ -62,6 +62,7 @@ jobs:
         run: |
           uv pip install wheel 
           uv run wheel tags --python-tag=py3 --abi-tag=none --remove dist/*.whl
+        shell: bash
 
       - name: Upload wheel
         uses: actions/upload-artifact@v4
