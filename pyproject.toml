@@ -99,6 +99,9 @@ docs = [
     # YORE: EOL 3.10: Remove line.
     "tomli>=2.0; python_version < '3.11'",
 ]
+dev = [
+    "griffecli>=2.0.0",
+]
 
 [tool.uv]
 default-groups = ["maintain", "ci", "docs"]

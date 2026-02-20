@@ -149,8 +149,11 @@ def build_go(ctx: Context, goos: str = "", goarch: str = "") -> None:
 
     # Resolve absolute output path before changing workdir
     out = Path.cwd().resolve() / _GO_OUT_DIR / f"libcollector.{_ext}"
+    os.environ["CGO_ENABLED"] = "1"
+    os.environ["GOOS"] = _goos
+    os.environ["GOARCH"] = _goarch
     ctx.run(
-        f"CGO_ENABLED=1 GOOS={_goos} GOARCH={_goarch} go build -buildmode=c-shared -o {out} .",
+        f"go build -buildmode=c-shared -o {out} .",
         title=f"Building Go library ({_goos}/{_goarch})",
         workdir=_GO_SRC,
     )
