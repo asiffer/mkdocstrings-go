@@ -128,8 +128,8 @@ def format(ctx: Context) -> None:
     ctx.run(tools.ruff.format(*PY_SRC_LIST, config="config/ruff.toml"), title="Formatting code")
 
 
-_GO_SRC = "src/lib"
-_GO_OUT_DIR = Path("src/mkdocstrings_handlers/go/_internal")
+_GO_SRC = Path("src") / "lib"
+_GO_OUT_DIR = Path("src") / "mkdocstrings_handlers" / "go" / "_internal"
 _GOOS_MAP = {"Darwin": "darwin", "Linux": "linux", "Windows": "windows"}
 _GOARCH_MAP = {"x86_64": "amd64", "AMD64": "amd64", "aarch64": "arm64", "arm64": "arm64"}
 _EXT_MAP = {"darwin": "dylib", "windows": "dll"}
@@ -154,7 +154,7 @@ def build_go(ctx: Context, goos: str = "", goarch: str = "") -> None:
     os.environ["GOARCH"] = _goarch
     ctx.run(
         f"go build -buildmode=c-shared -o {out} .",
-        title=f"Building Go library ({_goos}/{_goarch})",
+        title=f"Building Go library {out} ({_goos}/{_goarch})",
         workdir=_GO_SRC,
     )
     # Remove the generated C header (not needed at runtime)

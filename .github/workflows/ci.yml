@@ -45,7 +45,6 @@ jobs:
           python-version: "3.13"
 
     runs-on: ${{ matrix.os }}
-
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -74,7 +73,7 @@ jobs:
       run: make setup
 
     - name: Build Go library
-      run: make build-go
+      run: make build-go && uv sync --all-extras
 
     - name: Check if the documentation builds correctly
       run: make check-docs
