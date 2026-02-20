@@ -154,7 +154,7 @@ jobs:
       run: make setup
 
     - name: Build Go library
-      run: make build-go
+      run: make build-go && uv sync --all-extras
 
     - name: Download objects inventory
       uses: actions/download-artifact@v4
