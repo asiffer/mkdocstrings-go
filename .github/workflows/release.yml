@@ -47,7 +47,7 @@ jobs:
       - name: Install dependencies
         env:
           UV_RESOLUTION: highest
-        run: make setup
+        run: uv sync --all-extras
 
       - name: Build Go library
         run: make build-go && uv sync --all-extras
