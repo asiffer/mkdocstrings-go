@@ -224,7 +224,7 @@ func collect(cImportPath *C.char, cDir *C.char, cObject *C.char, outBuf *C.char,
 	}
 
 	result.Path = object
-	result.SetLocationPrefix(path.Join(mod...))
+	result.SetLocationPrefix(path.Join(mod...))	
 
 	data, err := json.Marshal(result)
 	if err != nil || C.int(len(data)+1) > outSize {
